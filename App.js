@@ -2,10 +2,14 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default class App extends Component {
-  state = {
-    resultText: '',
-    calculationText: '',
-  };
+  constructor() {
+    super();
+    this.state = {
+      resultText: '',
+      calculationText: '',
+    };
+    this.operations = ['👈', '/', '*', '+', '-'];
+  }
 
   buttonPressed = text => {
     if (text === '=') {
@@ -26,10 +30,20 @@ export default class App extends Component {
     console.log(operation);
     switch (operation) {
       case '👈':
-        console.log('result', this.state.resultText);
         let text = this.state.resultText.split('');
         text.pop();
         this.setState({ resultText: text.join('') });
+        break;
+      case '/':
+      case '*':
+      case '+':
+      case '-':
+        const lastChar = this.state.resultText.slice(-1);
+        if (this.operations.indexOf(lastChar) > 0) return;
+        if (this.state.resultText === '') return;
+        this.setState(prev => ({
+          resultText: prev.resultText + operation,
+        }));
     }
   };
 
@@ -57,11 +71,14 @@ export default class App extends Component {
     }
 
     let ops = [];
-    const operations = ['👈', '/', '*', '+', '-'];
-    for (let i = 0; i <= 3; i++) {
+    for (let i = 0; i <= 4; i++) {
       ops.push(
-        <TouchableOpacity style={styles.btn} key={i} onPress={() => this.operate(operations[i])}>
-          <Text>{operations[i]}</Text>
+        <TouchableOpacity
+          style={styles.btn}
+          key={i}
+          onPress={() => this.operate(this.operations[i])}
+        >
+          <Text>{this.operations[i]}</Text>
         </TouchableOpacity>
       );
     }
@@ -125,7 +142,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'stretch',
-    padding: 10,
+    padding: 15,
   },
   numbers: {
     flex: 3,
